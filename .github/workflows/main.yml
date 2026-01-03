@@ -1,0 +1,21 @@
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout GitOps repo
+        uses: actions/checkout@v4
+        with:
+          repository: somminn/project-a-gitops
+          path: gitops
+          ssh-key: ${{ secrets.GITOPS_DEPLOY_KEY }}
+
+      - name: Update manifests (tag)
+        run: |
+          cd gitops/app/frontend
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          yq -i '.images[0].newTag = "${{ github.sha }}"' kustomization.yml
+          git add .
+          git diff --cached --quiet && echo "No changes" && exit 0
+          git commit -m "[Chore] update image tag"
+          git push
