@@ -11,12 +11,31 @@ jobs:
       - name: Checkout app repo
         uses: actions/checkout@v4
 
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push frontend image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: cowmin/project-a-frontend:${{ github.sha }}
+
       - name: Checkout GitOps repo
         uses: actions/checkout@v4
         with:
           repository: somminn/project-a-gitops
           path: gitops
           ssh-key: ${{ secrets.GITOPS_DEPLOY_KEY }}
+      
+      - name: Install yq
+        run: |
+          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+          yq --version    
 
       - name: Update frontend image tag
         run: |
