@@ -102,7 +102,7 @@ spec:
               git add "${GITOPS_FILE}"
               git diff --cached --quiet && echo "No changes" && exit 0
 
-              git commit -m "chore(gitops): update frontend image tag to ${IMAGE_TAG}"
+              git commit -m "[Chore] Update frontend image tag"
               GIT_SSH_COMMAND='ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=yes' git push
             '''
           }
