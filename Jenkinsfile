@@ -104,7 +104,7 @@ spec:
         }
 
         container('git') {
-          withCredentials([sshUserPrivateKey(credentialsId: 'gitops-deploy-key', keyFileVariable: 'SSH_KEY')]) {
+          withCredentials([sshUserPrivateKey(credentialsId: 'GITOPS_DEPLOY_KEY', keyFileVariable: 'SSH_KEY')]) {
             sh '''
               set -eu
               cd gitops
