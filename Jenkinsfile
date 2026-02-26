@@ -9,8 +9,9 @@ spec:
   serviceAccountName: jenkins
   containers:
     - name: kaniko
-      image: gcr.io/kaniko-project/executor:latest
-      command: ["cat"]
+      image: gcr.io/kaniko-project/executor:debug
+      command:
+        - /busybox/cat
       tty: true
       volumeMounts:
         - name: docker-config
