@@ -1,6 +1,8 @@
 name: GitOps Frontend Tag Update
 
 on:
+  push:
+    branches: [ main ]
   workflow_dispatch:
 
 jobs:
