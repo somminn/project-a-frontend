@@ -79,6 +79,8 @@ spec:
           withCredentials([sshUserPrivateKey(credentialsId: 'GITOPS_DEPLOY_KEY', keyFileVariable: 'SSH_KEY')]) {
             sh '''
               set -eu
+              apk add --no-cache yq
+
               mkdir -p ~/.ssh
               cp "$SSH_KEY" ~/.ssh/id_rsa
               chmod 600 ~/.ssh/id_rsa
@@ -86,28 +88,14 @@ spec:
 
               rm -rf gitops
               git clone "${GITOPS_REPO}" gitops
-            '''
-          }
-        }
 
-        container('yq') {
-          sh '''
-            set -eu
-            cd gitops
-
-            yq -i '
-              (.images[] | select(.name == strenv(DOCKER_IMAGE)) | .newTag) = strenv(IMAGE_TAG)
-            ' "${GITOPS_FILE}"
-
-            yq '.images' "${GITOPS_FILE}"
-          '''
-        }
-
-        container('git') {
-          withCredentials([sshUserPrivateKey(credentialsId: 'GITOPS_DEPLOY_KEY', keyFileVariable: 'SSH_KEY')]) {
-            sh '''
-              set -eu
               cd gitops
+              yq -i '
+                (.images[] | select(.name == strenv(DOCKER_IMAGE)) | .newTag) = strenv(IMAGE_TAG)
+              ' "${GITOPS_FILE}"
+
+              yq '.images' "${GITOPS_FILE}"
+
               git config user.name "${GIT_USER_NAME}"
               git config user.email "${GIT_USER_EMAIL}"
 
