@@ -10,8 +10,7 @@ spec:
   containers:
     - name: kaniko
       image: gcr.io/kaniko-project/executor:debug
-      command:
-        - /busybox/cat
+      command: ["/busybox/cat"]
       tty: true
       volumeMounts:
         - name: docker-config
@@ -28,6 +27,9 @@ spec:
     - name: docker-config
       secret:
         secretName: dockerhub-config
+        items:
+          - key: .dockerconfigjson
+            path: config.json
 """
     }
   }
